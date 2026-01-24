@@ -3,7 +3,6 @@
 <head>
 <meta charset="UTF-8" />
 <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-
 <title>My collection</title>
 
 <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@400;500;700&display=swap" rel="stylesheet">
@@ -46,6 +45,24 @@ input[type="search"] {
   padding: 10px;
   font-size: 1.3rem;
   border-radius: 6px;
+  cursor: pointer;
+  position: relative;
+}
+
+.group-title::after {
+  content: "▶";
+  position: absolute;
+  right: 12px;
+  font-size: 0.9rem;
+}
+
+.group-title.open::after {
+  content: "▼";
+}
+
+.group-content {
+  display: none;
+  margin-top: 12px;
 }
 
 .title-btn {
@@ -68,9 +85,7 @@ input[type="search"] {
   margin-top: 6px;
 }
 
-.item {
-  margin-bottom: 16px;
-}
+.item { margin-bottom: 16px; }
 
 .meta {
   font-size: 0.85rem;
@@ -84,6 +99,25 @@ input[type="search"] {
   color: #0056b3;
   padding: 2px 6px;
   border-radius: 10px;
+  margin-left: 6px;
+}
+
+.cast-notes {
+  font-size: 0.85rem;
+  margin-top: 6px;
+}
+
+.cast-notes strong { font-weight: 600; }
+
+.truncate {
+  max-height: 2.8em;
+  overflow: hidden;
+}
+
+.read-more {
+  color: #0066cc;
+  cursor: pointer;
+  font-size: 0.8rem;
   margin-left: 6px;
 }
 
@@ -125,13 +159,19 @@ Alternatively, email me at <a href="mailto:mazing2261@protonmail.com">mazing2261
 <ul class="guidelines">
   <li>I trade 1:1 and respect all NFT dates.</li>
   <li>I am open to trading up to 10 videos at a time.</li>
+<li>I will gift up to 2 videos at a time. Please make sure the video is giftable and make a note in the form/email that you are asking for a gift.</li>
   <li>Mega is preferred, however I do accept Google Drive links.</li>
-  <li>I aim to trade only originals, however cannot guarantee this.</li>
-  <li>I aim to respond within 2–3 days.</li>
+  <li>I aim to trade only originals, however cannot guarantee this. I add all size details of the files I have on the listings.</li>
+  <li>I aim to respond within 2–3 days, however can take longer at times. If you don't hear from me within a week please email me directly.</li>
 </ul>
 
 <div class="controls">
-  <input type="search" id="search" placeholder="Search by title…" />
+  <button type="button" id="expandAll">Expand all groups</button>
+  <button type="button" id="collapseAll" style="margin-left:8px;">Collapse all groups</button>
+</div>
+
+<div class="controls">
+  <input type="search" id="search" placeholder="Search by title or cast…" />
 </div>
 
 <form action="https://formspree.io/f/mnjqvnqz" method="POST" id="tradeForm">
@@ -159,6 +199,7 @@ const CSV_URL =
   "https://docs.google.com/spreadsheets/d/e/2PACX-1vSoRy5TtpW0igavzsGeFPJyxVmfShOncsDrRO_e3CI0MjASPeoL3KJCIs121cMyfwQdzKntycu-BAV3/pub?output=csv";
 
 let rows = [];
+const groupState = {};
 
 Papa.parse(CSV_URL, {
   download: true,
@@ -172,7 +213,10 @@ Papa.parse(CSV_URL, {
 
 document.getElementById("search").addEventListener("input", e => {
   const q = e.target.value.toLowerCase();
-  render(rows.filter(r => r.Title.toLowerCase().includes(q)));
+  render(rows.filter(r =>
+    r.Title.toLowerCase().includes(q) ||
+    (r.Cast || "").toLowerCase().includes(q)
+  ));
 });
 
 function groupKey(t) {
@@ -192,63 +236,108 @@ function render(data) {
   const groups = {};
   data.forEach(r => (groups[groupKey(r.Title)] ??= []).push(r));
 
-  const groupOrder = ['A–E', 'F–L', 'M–Q', 'R–T', 'U–Z', '0–9 / Special'];
+  const order = ['A–E','F–L','M–Q','R–T','U–Z','0–9 / Special'];
 
-  groupOrder.forEach(name => {
+  order.forEach(name => {
     const items = groups[name];
-    if (!items || !items.length) return;
+    if (!items) return;
 
-    const group = document.createElement('div');
-    group.className = 'group';
+    const group = document.createElement("div");
+    group.className = "group";
 
-    const heading = document.createElement('div');
-    heading.className = 'group-title';
+    const heading = document.createElement("div");
+    heading.className = "group-title";
     heading.textContent = name;
-    group.appendChild(heading);
+
+    const content = document.createElement("div");
+    content.className = "group-content";
+
+    const open = groupState[name] === true;
+    content.style.display = open ? "block" : "none";
+    if (open) heading.classList.add("open");
+
+    heading.onclick = () => {
+      const nowOpen = content.style.display === "none";
+      content.style.display = nowOpen ? "block" : "none";
+      heading.classList.toggle("open", nowOpen);
+      groupState[name] = nowOpen;
+    };
 
     const byTitle = {};
     items.forEach(i => (byTitle[i.Title] ??= []).push(i));
 
     Object.entries(byTitle).forEach(([title, entries]) => {
-      const btn = document.createElement('button');
-      btn.type = 'button';
-      btn.className = 'title-btn';
+      const btn = document.createElement("button");
+      btn.type = "button";
+      btn.className = "title-btn";
       btn.textContent = title;
 
-      const content = document.createElement('div');
-      content.className = 'title-content';
+      const tContent = document.createElement("div");
+      tContent.className = "title-content";
+
+      btn.onclick = () =>
+        tContent.style.display = tContent.style.display === "block" ? "none" : "block";
 
       entries.forEach(e => {
-        const item = document.createElement('div');
-        item.className = 'item';
+        const item = document.createElement("div");
+        item.className = "item";
 
-        const cb = document.createElement('input');
-        cb.type = 'checkbox';
+        const cb = document.createElement("input");
+        cb.type = "checkbox";
         cb.dataset.value = `${e.Title} - ${e.Date} - ${e.Master} - ${e.Link}`;
 
-        const label = document.createElement('label');
+        const label = document.createElement("label");
         label.appendChild(cb);
         label.innerHTML += ` ${e.Title} – <a href="${e.Link}" target="_blank">Link</a>`;
-        if (e.Giftable === 'Yes') label.innerHTML += `<span class="badge">Giftable</span>`;
+        if (e.Giftable === "Yes") label.innerHTML += `<span class="badge">Giftable</span>`;
 
-        const meta = document.createElement('div');
-        meta.className = 'meta';
+        const meta = document.createElement("div");
+        meta.className = "meta";
         meta.textContent =
           `${e.Location} | ${e.Master} | ${e.Date} | ${e.Format} | ${e.Size}`;
 
         item.append(label, meta);
-        content.appendChild(item);
+
+        if (e.Cast) {
+          const cast = document.createElement("div");
+          cast.className = "cast-notes";
+          cast.innerHTML = `<strong>Cast:</strong> <span class="truncate">${e.Cast}</span>`;
+          item.appendChild(cast);
+        }
+
+        if (e.Notes) {
+          const notes = document.createElement("div");
+          notes.className = "cast-notes";
+          notes.innerHTML = `<strong>Notes:</strong> <span class="truncate">${e.Notes}</span>`;
+          item.appendChild(notes);
+        }
+
+        tContent.appendChild(item);
       });
 
-      btn.onclick = () =>
-        content.style.display = content.style.display === 'block' ? 'none' : 'block';
-
-      group.append(btn, content);
+      content.append(btn, tContent);
     });
 
+    group.append(heading, content);
     list.appendChild(group);
   });
 }
+
+document.getElementById("expandAll").onclick = () => {
+  document.querySelectorAll(".group-title").forEach(h => {
+    h.classList.add("open");
+    h.nextElementSibling.style.display = "block";
+    groupState[h.textContent] = true;
+  });
+};
+
+document.getElementById("collapseAll").onclick = () => {
+  document.querySelectorAll(".group-title").forEach(h => {
+    h.classList.remove("open");
+    h.nextElementSibling.style.display = "none";
+    groupState[h.textContent] = false;
+  });
+};
 
 document.getElementById("tradeForm").addEventListener("submit", e => {
   const selected = [...document.querySelectorAll("input[type=checkbox]:checked")]
