@@ -1,57 +1,138 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-  <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>My collection</title>
-  <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@400;500;700&display=swap" rel="stylesheet">
-  <script src="https://cdn.jsdelivr.net/npm/papaparse@5.4.1/papaparse.min.js"></script>
-  <style>
-    body { font-family: 'Roboto', sans-serif; max-width: 900px; margin: 40px auto; line-height: 1.6; background-color: #f9f9f9; color: #333; }
-    h1 { font-size: 2.5rem; margin-bottom: 6px; }
-    p.subtitle { margin-bottom: 20px; color: #555; }
-    ul.guidelines { list-style: disc inside; margin-bottom: 24px; color: #444; }
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
 
-    input[type=search] { width: 100%; max-width: 400px; padding: 10px; font-size: 1rem; margin-bottom: 20px; }
+<title>My collection</title>
 
-    .group { margin-top: 32px; }
-    .group h2 { border-bottom: 2px solid #ddd; padding-bottom: 6px; }
+<link href="https://fonts.googleapis.com/css2?family=Roboto:wght@400;500;700&display=swap" rel="stylesheet">
+<script src="https://cdn.jsdelivr.net/npm/papaparse@5.4.1/papaparse.min.js"></script>
 
-    .title-btn { width: 100%; background: #e4e4e4; border: none; padding: 12px; font-size: 1.05rem; font-weight: 500; text-align: left; cursor: pointer; margin-top: 14px; border-radius: 8px; }
+<style>
+body {
+  font-family: 'Roboto', sans-serif;
+  max-width: 900px;
+  margin: 40px auto;
+  background: #f9f9f9;
+  color: #333;
+}
 
-    .title-content { display: none; background: #fff; border-radius: 8px; padding: 12px 16px; margin-top: 6px; }
+h1 { font-size: 2.5rem; margin-bottom: 6px; }
 
-    .item { margin-bottom: 16px; }
+.subtitle { color: #555; margin-bottom: 20px; }
 
-    .meta { font-size: 0.85rem; color: #666; margin-top: 4px; }
+.guidelines {
+  list-style: disc inside;
+  color: #444;
+  margin-bottom: 24px;
+}
 
-    .label { font-weight: 700; }
+.controls { margin-bottom: 20px; }
 
-    .badge { font-size: 0.7rem; background: #e6f2ff; color: #0056b3; padding: 2px 6px; border-radius: 10px; margin-left: 6px; }
+input[type="search"] {
+  width: 100%;
+  max-width: 400px;
+  padding: 10px;
+  font-size: 1rem;
+}
 
-    .truncate { max-height: 2.8em; overflow: hidden; }
-    .read-more { color: #007bff; cursor: pointer; font-size: 0.8rem; margin-left: 6px; }
+.group {
+  margin-top: 32px;
+}
 
-    button[type=submit] { margin-top: 20px; padding: 12px 24px; font-size: 1rem; border-radius: 6px; border: none; background-color: #007BFF; color: #fff; cursor: pointer; }
+.group-title {
+  background: #cfcfcf;
+  padding: 10px;
+  font-size: 1.3rem;
+  border-radius: 6px;
+}
 
-    .user-info label { display: block; margin-top: 16px; font-weight: 500; }
-    .user-info input, .user-info textarea { width: 100%; max-width: 400px; padding: 10px; margin-top: 4px; }
-  </style>
+.title-btn {
+  width: 100%;
+  margin-top: 14px;
+  background: #e4e4e4;
+  border: none;
+  padding: 12px;
+  font-size: 1.05rem;
+  text-align: left;
+  cursor: pointer;
+  border-radius: 8px;
+}
+
+.title-content {
+  display: none;
+  background: #fff;
+  border-radius: 8px;
+  padding: 12px 16px;
+  margin-top: 6px;
+}
+
+.item {
+  margin-bottom: 16px;
+}
+
+.meta {
+  font-size: 0.85rem;
+  color: #666;
+  margin-top: 4px;
+}
+
+.badge {
+  font-size: 0.7rem;
+  background: #e6f2ff;
+  color: #0056b3;
+  padding: 2px 6px;
+  border-radius: 10px;
+  margin-left: 6px;
+}
+
+button[type="submit"] {
+  margin-top: 20px;
+  padding: 12px 24px;
+  font-size: 1rem;
+  border-radius: 6px;
+  border: none;
+  background-color: #007BFF;
+  color: #fff;
+  cursor: pointer;
+}
+
+.user-info label {
+  display: block;
+  margin-top: 16px;
+  font-weight: 500;
+}
+
+.user-info input,
+.user-info textarea {
+  width: 100%;
+  max-width: 400px;
+  padding: 10px;
+}
+</style>
 </head>
+
 <body>
 
 <h1>My collection</h1>
-<p class="subtitle">Search or browse my titles below. Feel free to select any you are interested in and fill in the details below to submit your request. Alternatively, email me at <a href="mailto:mazing2261@protonmail.com">mazing2261@protonmail.com</a>.</p>
+
+<p class="subtitle">
+Search or browse my titles below. Feel free to select any you are interested in and fill in the details below to submit your request.
+Alternatively, email me at <a href="mailto:mazing2261@protonmail.com">mazing2261@protonmail.com</a>.
+</p>
 
 <ul class="guidelines">
   <li>I trade 1:1 and respect all NFT dates.</li>
   <li>I am open to trading up to 10 videos at a time.</li>
   <li>Mega is preferred, however I do accept Google Drive links.</li>
   <li>I aim to trade only originals, however cannot guarantee this.</li>
-  <li>I aim to respond within 2–3 days. If you have not heard back within 1 week please email me directly.</li>
+  <li>I aim to respond within 2–3 days.</li>
 </ul>
 
-<input type="search" id="search" placeholder="Search by title or cast…" />
+<div class="controls">
+  <input type="search" id="search" placeholder="Search by title…" />
+</div>
 
 <form action="https://formspree.io/f/mnjqvnqz" method="POST" id="tradeForm">
   <div id="list"></div>
@@ -74,105 +155,116 @@
 </form>
 
 <script>
-const CSV_URL = "https://docs.google.com/spreadsheets/d/e/2PACX-1vSoRy5TtpW0igavzsGeFPJyxVmfShOncsDrRO_e3CI0MjASPeoL3KJCIs121cMyfwQdzKntycu-BAV3/pub?output=csv";
+const CSV_URL =
+  "https://docs.google.com/spreadsheets/d/e/2PACX-1vSoRy5TtpW0igavzsGeFPJyxVmfShOncsDrRO_e3CI0MjASPeoL3KJCIs121cMyfwQdzKntycu-BAV3/pub?output=csv";
+
 let rows = [];
 
 Papa.parse(CSV_URL, {
   download: true,
   header: true,
   skipEmptyLines: true,
-  complete: r => { rows = r.data; render(rows); }
+  complete: r => {
+    rows = r.data;
+    render(rows);
+  }
 });
 
-document.getElementById('search').addEventListener('input', e => {
+document.getElementById("search").addEventListener("input", e => {
   const q = e.target.value.toLowerCase();
-  render(rows.filter(r => r.Title.toLowerCase().includes(q) || (r.Cast || '').toLowerCase().includes(q)));
+  render(rows.filter(r => r.Title.toLowerCase().includes(q)));
 });
 
 function groupKey(t) {
   const c = t.charAt(0).toUpperCase();
-  if (!c.match(/[A-Z]/)) return '0–9 / Special';
-  if (c <= 'E') return 'A–E';
-  if (c <= 'L') return 'F–L';
-  if (c <= 'Q') return 'M–Q';
-  if (c <= 'T') return 'R–T';
-  return 'U–Z';
-}
-
-function expandable(label, text) {
-  const div = document.createElement('div');
-  div.className = 'meta';
-  const span = document.createElement('span');
-  span.className = 'truncate';
-  span.textContent = text;
-  div.innerHTML = `<span class="label">${label}:</span> `;
-  div.appendChild(span);
-  if (text.length > 140) {
-    const more = document.createElement('span');
-    more.className = 'read-more';
-    more.textContent = 'Read more';
-    more.onclick = () => {
-      span.classList.toggle('truncate');
-      more.textContent = span.classList.contains('truncate') ? 'Read more' : 'Show less';
-    };
-    div.appendChild(more);
-  }
-  return div;
+  if (!c.match(/[A-Z]/)) return "0–9 / Special";
+  if (c <= "E") return "A–E";
+  if (c <= "L") return "F–L";
+  if (c <= "Q") return "M–Q";
+  if (c <= "T") return "R–T";
+  return "U–Z";
 }
 
 function render(data) {
-  const list = document.getElementById('list');
-  list.innerHTML = '';
+  const list = document.getElementById("list");
+  list.innerHTML = "";
 
   const groups = {};
   data.forEach(r => (groups[groupKey(r.Title)] ??= []).push(r));
 
-  Object.entries(groups).forEach(([name, items]) => {
-    const g = document.createElement('div'); g.className = 'group';
-    g.innerHTML = `<h2>${name}</h2>`;
+  const groupOrder = ['A–E', 'F–L', 'M–Q', 'R–T', 'U–Z', '0–9 / Special'];
+
+  groupOrder.forEach(name => {
+    const items = groups[name];
+    if (!items || !items.length) return;
+
+    const group = document.createElement('div');
+    group.className = 'group';
+
+    const heading = document.createElement('div');
+    heading.className = 'group-title';
+    heading.textContent = name;
+    group.appendChild(heading);
 
     const byTitle = {};
     items.forEach(i => (byTitle[i.Title] ??= []).push(i));
 
     Object.entries(byTitle).forEach(([title, entries]) => {
       const btn = document.createElement('button');
-      btn.type = 'button'; btn.className = 'title-btn'; btn.textContent = title;
-      const content = document.createElement('div'); content.className = 'title-content';
+      btn.type = 'button';
+      btn.className = 'title-btn';
+      btn.textContent = title;
+
+      const content = document.createElement('div');
+      content.className = 'title-content';
 
       entries.forEach(e => {
-        const item = document.createElement('div'); item.className = 'item';
-        const cb = document.createElement('input'); cb.type = 'checkbox';
+        const item = document.createElement('div');
+        item.className = 'item';
+
+        const cb = document.createElement('input');
+        cb.type = 'checkbox';
         cb.dataset.value = `${e.Title} - ${e.Date} - ${e.Master} - ${e.Link}`;
 
-        const line = document.createElement('label');
-        line.appendChild(cb);
-        line.innerHTML += ` ${e.Title} – <a href="${e.Link}" target="_blank">Link</a>`;
-        if (e.Giftable === 'Yes') line.innerHTML += `<span class="badge">Giftable</span>`;
+        const label = document.createElement('label');
+        label.appendChild(cb);
+        label.innerHTML += ` ${e.Title} – <a href="${e.Link}" target="_blank">Link</a>`;
+        if (e.Giftable === 'Yes') label.innerHTML += `<span class="badge">Giftable</span>`;
 
-        const meta = document.createElement('div'); meta.className = 'meta';
-        meta.innerHTML = `<span class="label">Location:</span> ${e.Location} | <span class="label">Master:</span> ${e.Master} | <span class="label">Date:</span> ${e.Date} | <span class="label">Format:</span> ${e.Format} | <span class="label">Size:</span> ${e.Size}`;
+        const meta = document.createElement('div');
+        meta.className = 'meta';
+        meta.textContent =
+          `${e.Location} | ${e.Master} | ${e.Date} | ${e.Format} | ${e.Size}`;
 
-        item.append(line, meta);
-        if (e.Cast) item.appendChild(expandable('Cast', e.Cast));
-        if (e.Notes) item.appendChild(expandable('Notes', e.Notes));
+        item.append(label, meta);
         content.appendChild(item);
       });
 
-      btn.onclick = () => content.style.display = content.style.display === 'block' ? 'none' : 'block';
-      g.append(btn, content);
+      btn.onclick = () =>
+        content.style.display = content.style.display === 'block' ? 'none' : 'block';
+
+      group.append(btn, content);
     });
 
-    list.appendChild(g);
+    list.appendChild(group);
   });
 }
 
-document.getElementById('tradeForm').addEventListener('submit', e => {
-  const selected = [...document.querySelectorAll('input[type=checkbox]:checked')]
+document.getElementById("tradeForm").addEventListener("submit", e => {
+  const selected = [...document.querySelectorAll("input[type=checkbox]:checked")]
     .map(cb => cb.dataset.value);
-  if (!selected.length) { e.preventDefault(); alert('Please select at least one title.'); return; }
-  document.getElementById('formTitles').value = selected.join('\n');
-  document.getElementById('formSubject').value = 'Trade Request: ' + selected.map(v => v.split(' - ')[0]).join(', ');
+
+  if (!selected.length) {
+    e.preventDefault();
+    alert("Please select at least one title.");
+    return;
+  }
+
+  document.getElementById("formTitles").value = selected.join("\n");
+  document.getElementById("formSubject").value =
+    "Trade Request: " + selected.map(v => v.split(" - ")[0]).join(", ");
 });
 </script>
+
 </body>
 </html>
