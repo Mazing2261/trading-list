@@ -4,7 +4,7 @@
 <meta charset="UTF-8" />
 <meta name="viewport" content="width=device-width, initial-scale=1.0" />
 
-<title>Trade List</title>
+<title>My Collection</title>
 
 <style>
 body {
@@ -15,13 +15,23 @@ body {
 }
 
 h1 {
-  margin-bottom: 10px;
+  margin-bottom: 8px;
+}
+
+.section {
+  margin-top: 40px;
+}
+
+.section h2 {
+  border-bottom: 2px solid #ddd;
+  padding-bottom: 6px;
+  margin-bottom: 20px;
 }
 
 input[type="search"] {
   width: 100%;
   padding: 10px;
-  margin-bottom: 24px;
+  margin: 20px 0 30px;
   font-size: 16px;
 }
 
@@ -30,9 +40,24 @@ input[type="search"] {
   border-bottom: 1px solid #ddd;
 }
 
+.title-header {
+  display: flex;
+  justify-content: space-between;
+  cursor: pointer;
+}
+
 .title-name {
   font-weight: 600;
-  margin-bottom: 6px;
+}
+
+.toggle {
+  font-size: 0.85em;
+  color: #0066cc;
+}
+
+.title-details {
+  margin-top: 8px;
+  display: none;
 }
 
 .title-meta {
@@ -59,14 +84,14 @@ input[type="search"] {
   color: #0066cc;
   cursor: pointer;
   font-size: 0.85em;
-  margin-left: 4px;
+  margin-left: 6px;
 }
 </style>
 </head>
 
 <body>
 
-<h1>My Trade List</h1>
+<h1>My Collection</h1>
 
 <p>
 Search or browse my titles below. Feel free to select any you are interested in and fill in the details below to submit your request.
@@ -99,11 +124,11 @@ fetch(CSV_URL)
       };
     });
 
-    render(data);
+    renderGrouped(data);
 
     document.getElementById("search").addEventListener("input", e => {
       const q = e.target.value.toLowerCase();
-      render(
+      renderGrouped(
         data.filter(d =>
           d.title.toLowerCase().includes(q) ||
           d.cast.toLowerCase().includes(q)
@@ -116,64 +141,116 @@ function clean(value = "") {
   return value.replace(/^"|"$/g, "").trim();
 }
 
-function render(data) {
+/* Alphabet grouping */
+function getGroup(title) {
+  const first = title.charAt(0).toUpperCase();
+  if (!first.match(/[A-Z]/)) return "0-9 / Special";
+  if (first <= "F") return "A – F";
+  if (first <= "L") return "G – L";
+  if (first <= "R") return "M – R";
+  return "S – Z";
+}
+
+function renderGrouped(data) {
   const container = document.getElementById("titles-container");
   container.innerHTML = "";
-  data.forEach(item => container.appendChild(renderTitle(item)));
+
+  const groups = {};
+  data.forEach(item => {
+    const g = getGroup(item.title);
+    if (!groups[g]) groups[g] = [];
+    groups[g].push(item);
+  });
+
+  Object.keys(groups).sort().forEach(group => {
+    const section = document.createElement("div");
+    section.className = "section";
+
+    const header = document.createElement("h2");
+    header.textContent = group;
+    section.appendChild(header);
+
+    groups[group].forEach(item => {
+      section.appendChild(renderTitle(item));
+    });
+
+    container.appendChild(section);
+  });
 }
 
 function renderTitle(item) {
   const card = document.createElement("div");
   card.className = "title-card";
 
-  /* TITLE */
-  const title = document.createElement("div");
-  title.className = "title-name";
-  title.textContent = `${item.title} - ${item.link}`;
-  card.appendChild(title);
+  /* HEADER */
+  const header = document.createElement("div");
+  header.className = "title-header";
 
-  /* META */
+  const name = document.createElement("div");
+  name.className = "title-name";
+  name.textContent = `${item.title} - ${item.link}`;
+
+  const toggle = document.createElement("div");
+  toggle.className = "toggle";
+  toggle.textContent = "Expand";
+
+  header.appendChild(name);
+  header.appendChild(toggle);
+  card.appendChild(header);
+
+  /* DETAILS */
+  const details = document.createElement("div");
+  details.className = "title-details";
+
   const meta = document.createElement("div");
   meta.className = "title-meta";
   meta.textContent = `${item.location} | ${item.master} | ${item.date} | ${item.format} | ${item.size} | ${item.giftable}`;
-  card.appendChild(meta);
+  details.appendChild(meta);
 
-  /* CAST */
   if (item.cast) {
-    const cast = document.createElement("div");
-    cast.className = "cast-notes";
-    cast.innerHTML = `
-      <span class="label">Cast:</span>
-      <span class="truncate">${item.cast}</span>
-      ${item.cast.length > 120 ? `<span class="read-more">Read more</span>` : ""}
-    `;
-    card.appendChild(cast);
+    details.appendChild(buildExpandable("Cast", item.cast));
   }
 
-  /* NOTES */
   if (item.notes) {
-    const notes = document.createElement("div");
-    notes.className = "cast-notes";
-    notes.innerHTML = `
-      <span class="label">Notes:</span>
-      <span class="truncate">${item.notes}</span>
-      ${item.notes.length > 120 ? `<span class="read-more">Read more</span>` : ""}
-    `;
-    card.appendChild(notes);
+    details.appendChild(buildExpandable("Notes", item.notes));
   }
 
-  /* READ MORE HANDLER */
-  card.querySelectorAll(".read-more").forEach(btn => {
-    btn.addEventListener("click", () => {
-      const text = btn.previousElementSibling;
-      text.classList.toggle("truncate");
-      btn.textContent = text.classList.contains("truncate")
-        ? "Read more"
-        : "Show less";
-    });
+  card.appendChild(details);
+
+  header.addEventListener("click", () => {
+    const open = details.style.display === "block";
+    details.style.display = open ? "none" : "block";
+    toggle.textContent = open ? "Expand" : "Collapse";
   });
 
   return card;
+}
+
+function buildExpandable(label, text) {
+  const wrap = document.createElement("div");
+  wrap.className = "cast-notes";
+
+  const span = document.createElement("span");
+  span.className = "truncate";
+  span.textContent = text;
+
+  wrap.innerHTML = `<span class="label">${label}:</span> `;
+  wrap.appendChild(span);
+
+  if (text.length > 120) {
+    const btn = document.createElement("span");
+    btn.className = "read-more";
+    btn.textContent = "Read more";
+    btn.onclick = () => {
+      span.classList.toggle("truncate");
+      btn.textContent = span.classList.contains("truncate")
+        ? "Read more"
+        : "Show less";
+    };
+    wrap.appendChild(btn);
+  }
+
+  return wrap;
 }
 </script>
 
