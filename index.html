@@ -101,6 +101,11 @@
 
   <script src="https://cdn.jsdelivr.net/npm/papaparse@5.4.1/papaparse.min.js"></script>
   <script>
+    function truncateText(text, limit) {
+      if (!text) return '';
+      return text.length > limit ? text.slice(0, limit) + '…' : text;
+    }
+
     function formatDate(d) {
       if (!d) return '';
       const dateObj = new Date(d);
@@ -123,7 +128,9 @@
           date: formatDate(item['Date'] || item['date']),
           format: item['Format'] || item['format'],
           size: item['Size'] || item['size'],
-          giftable: item['Giftable'] || item['giftable']
+          giftable: item['Giftable'] || item['giftable'],
+          cast: item['Cast'] || item['cast'],
+          notes: item['Notes'] || item['notes']
         }));
         document.getElementById('totalCount').textContent = `Browsing ${data.length} total titles`;
         renderList();
@@ -136,7 +143,12 @@
 
     searchInput.addEventListener('input', renderList);
 
-    document.getElementById('expandAll').onclick = () => document.querySelectorAll('.collapsible').forEach(b => { b.classList.add('active'); const c = b.nextElementSibling; if (c) c.style.display = 'block'; });
+    document.getElementById('expandAll').onclick = () => document.querySelectorAll('.read-more').forEach(link => link.onclick = e => {
+        e.preventDefault();
+        link.parentElement.innerHTML = link.parentElement.innerHTML.replace(/Read more.*/, decodeURIComponent(link.dataset.full));
+      });
+
+      document.querySelectorAll('.collapsible').forEach(b => { b.classList.add('active'); const c = b.nextElementSibling; if (c) c.style.display = 'block'; });
     document.getElementById('collapseAll').onclick = () => document.querySelectorAll('.collapsible').forEach(b => { b.classList.remove('active'); const c = b.nextElementSibling; if (c) c.style.display = 'none'; });
     document.getElementById('clearFilters').onclick = () => { searchInput.value = ''; renderList(); };
 
@@ -206,7 +218,23 @@
 
             const meta = document.createElement('div');
             meta.className = 'meta';
-            meta.textContent = [`Location: ${item.location}`, `Master: ${item.master}`, `Date: ${item.date}`, `Format: ${item.format}`, `Size: ${item.size}`].filter(Boolean).join(' | ');
+            meta.innerHTML = [`<strong>Location:</strong> ${item.location}`, `<strong>Master:</strong> ${item.master}`, `<strong>Date:</strong> ${item.date}`, `<strong>Format:</strong> ${item.format}`, `<strong>Size:</strong> ${item.size}`].filter(Boolean).join(' | ');
+
+            if (item.cast) {
+              const castDiv = document.createElement('div');
+              castDiv.className = 'meta';
+              castDiv.innerHTML = `<strong>Cast:</strong> ${truncateText(item.cast, 140)}`;
+              if (item.cast.length > 140) castDiv.innerHTML += ` <a href="#" class="read-more" data-full="${encodeURIComponent(item.cast)}">Read more</a>`;
+              div.appendChild(castDiv);
+            }
+
+            if (item.notes) {
+              const notesDiv = document.createElement('div');
+              notesDiv.className = 'meta';
+              notesDiv.innerHTML = `<strong>Notes:</strong> ${truncateText(item.notes, 180)}`;
+              if (item.notes.length > 180) notesDiv.innerHTML += ` <a href="#" class="read-more" data-full="${encodeURIComponent(item.notes)}">Read more</a>`;
+              div.appendChild(notesDiv);
+            }
 
             div.append(label, meta);
             tContent.appendChild(div);
