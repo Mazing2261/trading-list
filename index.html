@@ -44,6 +44,11 @@ h1 { font-size: 2.4rem; margin-bottom: 8px; }
 }
 .guidelines li { margin-bottom: 8px; }
 
+#selectedCount {
+  font-weight: 500;
+  margin-bottom: 16px;
+}
+
 input[type="search"] {
   width: 100%;
   max-width: 420px;
@@ -172,6 +177,8 @@ Browse or search my titles below. Select any you’re interested in and submit y
 
 <input type="search" id="search" placeholder="Search by title or cast">
 
+<div id="selectedCount">Selected: 0</div>
+
 <form action="https://formspree.io/f/mnjqvnqz" method="POST" id="tradeForm">
   <div id="list"></div>
 
@@ -196,10 +203,13 @@ Browse or search my titles below. Select any you’re interested in and submit y
 const CSV_URL = "https://docs.google.com/spreadsheets/d/e/2PACX-1vSoRy5TtpW0igavzsGeFPJyxVmfShOncsDrRO_e3CI0MjASPeoL3KJCIs121cMyfwQdzKntycu-BAV3/pub?output=csv";
 let rows = [];
 const selected = new Set();
-
-// Persist open groups and titles
 const openGroups = new Set();
 const openTitles = new Set();
+
+const selectedCountEl = document.getElementById("selectedCount");
+function updateSelectedCount() {
+  selectedCountEl.textContent = `Selected: ${selected.size}`;
+}
 
 Papa.parse(CSV_URL, {
   download:true,
@@ -246,8 +256,6 @@ function render(data, searchQuery="") {
 
     const c = document.createElement("div");
     c.className = "group-content";
-
-    // Restore collapse state
     c.style.display = openGroups.has(name) ? "block" : "none";
 
     h.onclick = () => {
@@ -270,8 +278,6 @@ function render(data, searchQuery="") {
 
       const box = document.createElement("div");
       box.className = "title-content";
-
-      // Restore collapse state
       box.style.display = openTitles.has(title) ? "block" : "none";
 
       btn.onclick = () => {
@@ -280,7 +286,6 @@ function render(data, searchQuery="") {
         visible ? openTitles.delete(title) : openTitles.add(title);
       };
 
-      // Auto-expand if search matches
       if (searchQuery && title.toLowerCase().includes(searchQuery)) box.style.display = "block";
 
       items.forEach(e => {
@@ -292,7 +297,10 @@ function render(data, searchQuery="") {
         const cb = document.createElement("input");
         cb.type = "checkbox";
         cb.checked = selected.has(id);
-        cb.onchange = () => cb.checked ? selected.add(id) : selected.delete(id);
+        cb.onchange = () => {
+          cb.checked ? selected.add(id) : selected.delete(id);
+          updateSelectedCount();
+        };
 
         const label = document.createElement("label");
         label.append(cb, ` ${e.Title} – `);
@@ -346,6 +354,8 @@ function render(data, searchQuery="") {
     g.append(h, c);
     list.appendChild(g);
   });
+
+  updateSelectedCount();
 }
 
 document.getElementById("tradeForm").addEventListener("submit", e => {
@@ -354,9 +364,11 @@ document.getElementById("tradeForm").addEventListener("submit", e => {
     alert("Please select at least one title.");
     return;
   }
-  document.getElementById("formTitles").value = [...selected].join("\n");
+
+  const selectedArray = Array.from(selected);
+  document.getElementById("formTitles").value = selectedArray.join("\n");
   document.getElementById("formSubject").value =
-    "Trade Request: " + [...selected].map(v => v.split(" - ")[0]).join(", ");
+    "Trade Request: " + selectedArray.map(v => v.split(" - ")[0]).join(", ");
 });
 </script>
 
