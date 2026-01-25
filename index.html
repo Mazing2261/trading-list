@@ -1,205 +1,256 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-<meta charset="UTF-8" />
-<meta name="viewport" content="width=device-width, initial-scale=1.0" />
-<title>My collection</title>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>My Collection</title>
 
-<link href="https://fonts.googleapis.com/css2?family=Roboto:wght@400;500;700&display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&display=swap" rel="stylesheet">
 <script src="https://cdn.jsdelivr.net/npm/papaparse@5.4.1/papaparse.min.js"></script>
 
 <style>
+:root {
+  --bg: #f6f7fb;
+  --card: #ffffff;
+  --soft: #eef1f6;
+  --border: #e3e6ee;
+  --text: #2f3440;
+  --muted: #6b7280;
+  --accent: #4a6cf7;
+}
+
+* {
+  box-sizing: border-box;
+}
+
 body {
-  font-family: 'Roboto', sans-serif;
+  font-family: 'Inter', sans-serif;
+  background: var(--bg);
+  color: var(--text);
   max-width: 900px;
   margin: 40px auto;
-  background: #f9f9f9;
-  color: #333;
+  padding: 0 16px;
 }
 
-h1 { font-size: 2.5rem; margin-bottom: 6px; }
+h1 {
+  font-size: 2.3rem;
+  margin-bottom: 8px;
+}
 
-.subtitle { color: #555; margin-bottom: 20px; }
+.subtitle {
+  color: var(--muted);
+  max-width: 720px;
+  margin-bottom: 28px;
+  line-height: 1.6;
+}
 
 .guidelines {
-  list-style: disc inside;
-  color: #444;
-  margin-bottom: 24px;
+  background: var(--card);
+  padding: 18px 22px;
+  border-radius: 16px;
+  border: 1px solid var(--border);
+  margin-bottom: 32px;
 }
 
-.controls { margin-bottom: 20px; }
+.guidelines li {
+  margin: 6px 0;
+}
+
+.controls {
+  margin: 22px 0;
+}
 
 input[type="search"] {
   width: 100%;
-  max-width: 400px;
-  padding: 10px;
+  max-width: 420px;
+  padding: 14px;
   font-size: 1rem;
+  border-radius: 14px;
+  border: 1px solid var(--border);
 }
 
 .group {
-  margin-top: 32px;
+  margin-top: 44px;
 }
 
 .group-title {
-  background: #cfcfcf;
-  padding: 10px;
+  background: var(--soft);
+  padding: 16px 20px;
+  border-radius: 18px;
   font-size: 1.3rem;
-  border-radius: 6px;
+  font-weight: 600;
   cursor: pointer;
   position: relative;
 }
 
 .group-title::after {
-  content: "▶";
+  content: "▸";
   position: absolute;
-  right: 12px;
-  font-size: 0.9rem;
+  right: 20px;
 }
 
 .group-title.open::after {
-  content: "▼";
+  content: "▾";
 }
 
 .group-content {
   display: none;
-  margin-top: 12px;
+  margin-top: 22px;
 }
 
+/* TITLE CARD */
 .title-btn {
   width: 100%;
-  margin-top: 14px;
-  background: #e4e4e4;
-  border: none;
-  padding: 12px;
-  font-size: 1.05rem;
+  background: var(--card);
+  border: 1px solid var(--border);
+  border-radius: 20px;
+  padding: 18px 22px;
+  font-size: 1.15rem;
+  font-weight: 500;
   text-align: left;
   cursor: pointer;
-  border-radius: 8px;
+  margin-bottom: 16px;
+  transition: box-shadow 0.15s ease;
+}
+
+.title-btn:hover {
+  box-shadow: 0 10px 28px rgba(0,0,0,0.08);
 }
 
 .title-content {
   display: none;
-  background: #fff;
-  border-radius: 8px;
-  padding: 12px 16px;
-  margin-top: 6px;
+  background: var(--card);
+  border: 1px solid var(--border);
+  border-radius: 20px;
+  padding: 24px;
+  margin: -6px 0 26px 0;
 }
 
-.item { margin-bottom: 16px; }
+.item {
+  padding: 20px 0;
+  border-bottom: 1px solid var(--border);
+}
+
+.item:last-child {
+  border-bottom: none;
+}
+
+.item label {
+  font-size: 1rem;
+}
 
 .meta {
+  margin-top: 10px;
   font-size: 0.85rem;
-  color: #666;
-  margin-top: 4px;
+  color: var(--muted);
 }
 
 .badge {
-  font-size: 0.7rem;
-  background: #e6f2ff;
-  color: #0056b3;
-  padding: 2px 6px;
-  border-radius: 10px;
-  margin-left: 6px;
+  background: #e7ecff;
+  color: var(--accent);
+  padding: 4px 10px;
+  border-radius: 999px;
+  font-size: 0.75rem;
+  margin-left: 8px;
 }
 
-.cast-notes {
-  font-size: 0.85rem;
-  margin-top: 6px;
+.detail-block {
+  margin-top: 14px;
+  padding: 12px 14px;
+  background: #f9fafc;
+  border-radius: 12px;
+  font-size: 0.9rem;
+  line-height: 1.5;
 }
 
-.cast-notes strong { font-weight: 600; }
-
-.truncate {
-  max-height: 2.8em;
-  overflow: hidden;
+.detail-block strong {
+  display: block;
+  margin-bottom: 4px;
+  font-weight: 600;
 }
 
-.read-more {
-  color: #0066cc;
-  cursor: pointer;
-  font-size: 0.8rem;
-  margin-left: 6px;
-}
-
-button[type="submit"] {
-  margin-top: 20px;
-  padding: 12px 24px;
-  font-size: 1rem;
-  border-radius: 6px;
-  border: none;
-  background-color: #007BFF;
-  color: #fff;
-  cursor: pointer;
+.user-info {
+  margin-top: 48px;
+  background: var(--card);
+  padding: 26px;
+  border-radius: 22px;
+  border: 1px solid var(--border);
 }
 
 .user-info label {
   display: block;
-  margin-top: 16px;
-  font-weight: 500;
+  margin-top: 20px;
+  font-weight: 600;
 }
 
 .user-info input,
 .user-info textarea {
   width: 100%;
-  max-width: 400px;
-  padding: 10px;
+  max-width: 420px;
+  margin-top: 8px;
+  padding: 14px;
+  border-radius: 14px;
+  border: 1px solid var(--border);
+}
+
+button[type="submit"] {
+  margin-top: 30px;
+  padding: 16px 32px;
+  font-size: 1rem;
+  border-radius: 16px;
+  border: none;
+  background: var(--accent);
+  color: white;
+  cursor: pointer;
 }
 </style>
 </head>
 
 <body>
 
-<h1>My collection</h1>
-
+<h1>My Collection</h1>
 <p class="subtitle">
-Search or browse my titles below. Feel free to select any you are interested in and fill in the details below to submit your request.
-Alternatively, email me at <a href="mailto:mazing2261@protonmail.com">mazing2261@protonmail.com</a>.
+Browse or search my titles below. Select any you’re interested in and submit your trade request at the bottom.
 </p>
 
 <ul class="guidelines">
-  <li>I trade 1:1 and respect all NFT dates.</li>
-  <li>I am open to trading up to 10 videos at a time.</li>
+
+<li>I trade 1:1 and respect all NFT dates.</li>
+<li>I am open to trading up to 10 videos at a time.</li>
 <li>I will gift up to 2 videos at a time. Please make sure the video is giftable and make a note in the form/email that you are asking for a gift.</li>
-  <li>Mega is preferred, however I do accept Google Drive links.</li>
-  <li>I aim to trade only originals, however cannot guarantee this. I add all size details of the files I have on the listings.</li>
-  <li>I aim to respond within 2–3 days, however can take longer at times. If you don't hear from me within a week please email me directly.</li>
+<li>Mega is preferred, however I do accept Google Drive links.</li>
+<li>I aim to trade only originals, however cannot guarantee this. Please check the file size on the listing</li>
+<li>I aim to respond within 2–3 days, however can take longer at times. If you don't hear from me within a week please email me directly.</li>
+<li>I try to ensure all listings are accurate and up to date. If you find errors please let me know and I will fix them</li>
 </ul>
 
 <div class="controls">
-  <button type="button" id="expandAll">Expand all groups</button>
-  <button type="button" id="collapseAll" style="margin-left:8px;">Collapse all groups</button>
-</div>
-
-<div class="controls">
-  <input type="search" id="search" placeholder="Search by title or cast…" />
+  <input type="search" id="search" placeholder="Search by title or cast…">
 </div>
 
 <form action="https://formspree.io/f/mnjqvnqz" method="POST" id="tradeForm">
   <div id="list"></div>
 
   <div class="user-info">
-    <label>Your email address</label>
-    <input type="email" name="email" required />
+    <label>Your email</label>
+    <input type="email" name="email" required>
 
-    <label>Link to your collection for trades (optional)</label>
-    <input type="text" name="collection" />
+    <label>Link to your collection (optional)</label>
+    <input type="text" name="collection">
 
     <label>Comments / questions</label>
     <textarea name="comments" rows="4"></textarea>
+
+    <input type="hidden" name="titles" id="formTitles">
+    <input type="hidden" name="_subject" id="formSubject">
+
+    <button type="submit">Send my selections</button>
   </div>
-
-  <input type="hidden" name="titles" id="formTitles" />
-  <input type="hidden" name="_subject" id="formSubject" />
-
-  <button type="submit">Send my selections</button>
 </form>
 
 <script>
-const CSV_URL =
-  "https://docs.google.com/spreadsheets/d/e/2PACX-1vSoRy5TtpW0igavzsGeFPJyxVmfShOncsDrRO_e3CI0MjASPeoL3KJCIs121cMyfwQdzKntycu-BAV3/pub?output=csv";
-
+const CSV_URL = "https://docs.google.com/spreadsheets/d/e/2PACX-1vSoRy5TtpW0igavzsGeFPJyxVmfShOncsDrRO_e3CI0MjASPeoL3KJCIs121cMyfwQdzKntycu-BAV3/pub?output=csv";
 let rows = [];
-const groupState = {};
 
 Papa.parse(CSV_URL, {
   download: true,
@@ -236,49 +287,41 @@ function render(data) {
   const groups = {};
   data.forEach(r => (groups[groupKey(r.Title)] ??= []).push(r));
 
-  const order = ['A–E','F–L','M–Q','R–T','U–Z','0–9 / Special'];
-
-  order.forEach(name => {
-    const items = groups[name];
-    if (!items) return;
+  ['A–E','F–L','M–Q','R–T','U–Z','0–9 / Special'].forEach(name => {
+    if (!groups[name]) return;
 
     const group = document.createElement("div");
     group.className = "group";
 
-    const heading = document.createElement("div");
-    heading.className = "group-title";
-    heading.textContent = name;
+    const header = document.createElement("div");
+    header.className = "group-title";
+    header.textContent = name;
 
     const content = document.createElement("div");
     content.className = "group-content";
 
-    const open = groupState[name] === true;
-    content.style.display = open ? "block" : "none";
-    if (open) heading.classList.add("open");
-
-    heading.onclick = () => {
-      const nowOpen = content.style.display === "none";
-      content.style.display = nowOpen ? "block" : "none";
-      heading.classList.toggle("open", nowOpen);
-      groupState[name] = nowOpen;
+    header.onclick = () => {
+      const open = content.style.display === "block";
+      content.style.display = open ? "none" : "block";
+      header.classList.toggle("open", !open);
     };
 
     const byTitle = {};
-    items.forEach(i => (byTitle[i.Title] ??= []).push(i));
+    groups[name].forEach(i => (byTitle[i.Title] ??= []).push(i));
 
-    Object.entries(byTitle).forEach(([title, entries]) => {
+    Object.entries(byTitle).forEach(([title, items]) => {
       const btn = document.createElement("button");
       btn.type = "button";
       btn.className = "title-btn";
       btn.textContent = title;
 
-      const tContent = document.createElement("div");
-      tContent.className = "title-content";
+      const box = document.createElement("div");
+      box.className = "title-content";
 
       btn.onclick = () =>
-        tContent.style.display = tContent.style.display === "block" ? "none" : "block";
+        box.style.display = box.style.display === "block" ? "none" : "block";
 
-      entries.forEach(e => {
+      items.forEach(e => {
         const item = document.createElement("div");
         item.className = "item";
 
@@ -287,57 +330,51 @@ function render(data) {
         cb.dataset.value = `${e.Title} - ${e.Date} - ${e.Master} - ${e.Link}`;
 
         const label = document.createElement("label");
-        label.appendChild(cb);
-        label.innerHTML += ` ${e.Title} – <a href="${e.Link}" target="_blank">Link</a>`;
-        if (e.Giftable === "Yes") label.innerHTML += `<span class="badge">Giftable</span>`;
+        label.append(cb, ` ${e.Title} – `);
+
+        const a = document.createElement("a");
+        a.href = e.Link;
+        a.target = "_blank";
+        a.textContent = "Link";
+
+        label.appendChild(a);
+        if (e.Giftable === "Yes") {
+          const badge = document.createElement("span");
+          badge.className = "badge";
+          badge.textContent = "Giftable";
+          label.appendChild(badge);
+        }
 
         const meta = document.createElement("div");
         meta.className = "meta";
-        meta.textContent =
-          `${e.Location} | ${e.Master} | ${e.Date} | ${e.Format} | ${e.Size}`;
+        meta.textContent = `${e.Location} | ${e.Master} | ${e.Date} | ${e.Format} | ${e.Size}`;
 
         item.append(label, meta);
 
         if (e.Cast) {
           const cast = document.createElement("div");
-          cast.className = "cast-notes";
-          cast.innerHTML = `<strong>Cast:</strong> <span class="truncate">${e.Cast}</span>`;
+          cast.className = "detail-block";
+          cast.innerHTML = `<strong>Cast</strong>${e.Cast}`;
           item.appendChild(cast);
         }
 
         if (e.Notes) {
           const notes = document.createElement("div");
-          notes.className = "cast-notes";
-          notes.innerHTML = `<strong>Notes:</strong> <span class="truncate">${e.Notes}</span>`;
+          notes.className = "detail-block";
+          notes.innerHTML = `<strong>Notes</strong>${e.Notes}`;
           item.appendChild(notes);
         }
 
-        tContent.appendChild(item);
+        box.appendChild(item);
       });
 
-      content.append(btn, tContent);
+      content.append(btn, box);
     });
 
-    group.append(heading, content);
+    group.append(header, content);
     list.appendChild(group);
   });
 }
-
-document.getElementById("expandAll").onclick = () => {
-  document.querySelectorAll(".group-title").forEach(h => {
-    h.classList.add("open");
-    h.nextElementSibling.style.display = "block";
-    groupState[h.textContent] = true;
-  });
-};
-
-document.getElementById("collapseAll").onclick = () => {
-  document.querySelectorAll(".group-title").forEach(h => {
-    h.classList.remove("open");
-    h.nextElementSibling.style.display = "none";
-    groupState[h.textContent] = false;
-  });
-};
 
 document.getElementById("tradeForm").addEventListener("submit", e => {
   const selected = [...document.querySelectorAll("input[type=checkbox]:checked")]
@@ -357,3 +394,4 @@ document.getElementById("tradeForm").addEventListener("submit", e => {
 
 </body>
 </html>
+
