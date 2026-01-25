@@ -44,11 +44,6 @@ h1 { font-size: 2.4rem; margin-bottom: 8px; }
 }
 .guidelines li { margin-bottom: 8px; }
 
-#selectedCount {
-  font-weight: 500;
-  margin-bottom: 16px;
-}
-
 input[type="search"] {
   width: 100%;
   max-width: 420px;
@@ -133,16 +128,33 @@ input[type="search"] {
   border-radius: 22px;
   border: 1px solid var(--border);
   margin-top: 50px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
+
+.user-info label {
+  width: 100%;
+  max-width: 420px;
+  margin-top: 12px;
+  font-weight: 500;
 }
 
 .user-info input,
 .user-info textarea {
   width: 100%;
   max-width: 420px;
-  margin-top: 8px;
+  margin-top: 6px;
   padding: 14px;
   border-radius: 14px;
   border: 1px solid var(--border);
+  box-sizing: border-box;
+}
+
+#selectedCount {
+  font-weight: 500;
+  margin-bottom: 16px;
+  text-align: center;
 }
 
 button[type="submit"] {
@@ -153,6 +165,7 @@ button[type="submit"] {
   background: var(--accent);
   color: white;
   cursor: pointer;
+  align-self: center;
 }
 </style>
 </head>
@@ -177,10 +190,10 @@ Browse or search my titles below. Select any you’re interested in and submit y
 
 <input type="search" id="search" placeholder="Search by title or cast">
 
-<div id="selectedCount">Selected: 0</div>
-
 <form action="https://formspree.io/f/mnjqvnqz" method="POST" id="tradeForm">
   <div id="list"></div>
+
+  <div id="selectedCount">Selected: 0</div>
 
   <div class="user-info">
     <label>Email</label>
